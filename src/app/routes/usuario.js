@@ -34,7 +34,7 @@ router.get('/findAll', (req, res) => {
     db.query(query, (err, results) => {
         if (err) return res.status(500).json({ error: 'Erro ao buscar usuários' });
         res.status(200).json(results);
-    })
+    });
 })
 
 router.get('/findById/:id', (req, res) => {
