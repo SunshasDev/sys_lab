@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const service = require('../services/reservaService');
+const reservaService = require('../services/reservaService');
 
 router.post('/save', (req, res) => {
-    service.salvar(req.body, (err, result) => {
+    reservaService.salvar(req.body, (err, result) => {
         if (err) {
             if (err.tipo === 'VALIDACAO')
                 return res.status(400).json({ sucesso: false, erro: err.mensagem });
@@ -19,9 +19,9 @@ router.post('/save', (req, res) => {
     });
 });
 
-
+// CREATE BULK
 router.post('/saveAll', (req, res) => {
-    service.salvarLote(req.body, (err, result) => {
+    reservaService.salvarLote(req.body, (err, result) => {
         if (err) {
             if (err.tipo === 'VALIDACAO')
                 return res.status(400).json({ sucesso: false, erro: err.mensagem });
@@ -37,9 +37,9 @@ router.post('/saveAll', (req, res) => {
     });
 });
 
-
+// READ ALL
 router.get('/findAll', (req, res) => {
-    service.buscarTodas((err, rows) => {
+    reservaService.buscarTodas((err, rows) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ sucesso: false, erro: 'Erro ao buscar reservas' });
@@ -50,68 +50,26 @@ router.get('/findAll', (req, res) => {
 });
 
 
-router.get('/findById/:id', (req, res) => {
-    service.buscarPorId(req.params.id, (err, row) => {
+router.patch('/parcialUpdate/:id', (req, res) => {
+    reservaService.atualizarParcial(req.params.id, req.body, (err, result) => {
         if (err) {
-            console.error(err);
-            return res.status(500).json({ sucesso: false, erro: 'Erro ao buscar reserva' });
+            console.erro(err);
+            return res.status(err.status || 500).json({ sucesso: false, erro: err.erro || 'Erro ao atualizar a reserva' });
         }
-
-        if (!row)
-            return res.status(404).json({ sucesso: false, erro: 'Reserva não encontrada' });
-
-        res.json({ sucesso: true, data: row });
-    });
-});
-
-
-router.delete('/deleteById/:id', (req, res) => {
-    service.deletar(req.params.id, (err, result) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ sucesso: false, erro: 'Erro ao excluir reserva' });
-        }
-
-        if (result.affectedRows === 0)
-            return res.status(404).json({ sucesso: false, erro: 'Reserva não encontrada' });
-
-        res.json({ sucesso: true, data: { deleted: result.affectedRows } });
-    });
-});
-
-
-router.put('/updateById/:id', (req, res) => {
-    service.atualizar(req.params.id, req.body, (err, result) => {
-        if (err) {
-            if (err.tipo === 'VALIDACAO')
-                return res.status(400).json({ sucesso: false, erro: err.mensagem });
-
-            console.error(err);
-            return res.status(500).json({ sucesso: false, erro: 'Erro ao atualizar reserva' });
-        }
-
-        if (result.affectedRows === 0)
-            return res.status(404).json({ sucesso: false, erro: 'Reserva não encontrada' });
-
+        if (result.affectedRows === 0) return res.status(404).json({ sucesso: false, erro: 'Reserva não encontrado' });
         res.json({ sucesso: true, data: { updated: result.affectedRows } });
     });
 });
 
+router.get('/professor/:id', (req, res) => {
+    const professorId = req.params.id;
+    reservaService.buscarPorProfessor(professorId, (err, resultado) => {
+        if (err) return res.status(500).json({ sucesso: false, erro: 'Erro ao buscar reservas' });
 
-router.patch('/updatePartial/:id', (req, res) => {
-    service.atualizarParcial(req.params.id, req.body, (err, result) => {
-        if (err) {
-            if (err.tipo === 'VALIDACAO')
-                return res.status(400).json({ sucesso: false, erro: err.mensagem });
-
-            console.error(err);
-            return res.status(500).json({ sucesso: false, erro: 'Erro ao atualizar reserva' });
-        }
-
-        if (result.affectedRows === 0)
-            return res.status(404).json({ sucesso: false, erro: 'Reserva não encontrada' });
-
-        res.json({ sucesso: true, data: { updated: result.affectedRows } });
+        res.json({
+            sucesso: true,
+            data: resultado
+        });
     });
 });
 

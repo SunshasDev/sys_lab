@@ -16,7 +16,7 @@ function salvarUsuario(data, callback) {
                 return callback({ status: 400, erro: 'nome,email,senha obrigatórios' });
             }
         }
-        return usuarioDAO.salvarUsuariosEmLote(data, callback);
+        return usuarioDAO.salvarReservasEmLote(data, callback);
     }
 
     if (!validarNome(data.nome) || !validarEmail(data.email) || !data.senha) {
