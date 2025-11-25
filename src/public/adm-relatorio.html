@@ -4,67 +4,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/relatorio.css">
-    <title>Relatórios de Reservas</title>
+    <title>Relatórios - SysLab</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+        body { background-color: #f3f4f6; overflow-x: hidden; }
+
+        /* --- LAYOUT DO PORTAL --- */
+        #wrapper { display: flex; width: 100%; min-height: 100vh; }
+        #sidebar-wrapper { min-height: 100vh; width: 250px; margin-left: 0; background-color: #212529; color: #fff; transition: margin .25s ease-out; position: fixed; z-index: 1000; }
+        #sidebar-wrapper .sidebar-heading { padding: 1rem 0; background-color: #1a1e21; text-align: center; border-bottom: 1px solid #444; display: flex; justify-content: center; }
+        .logo-sidebar { max-width: 80%; height: auto; object-fit: contain; }
+        
+        .list-group-item-action { background-color: transparent; color: #b3b3b3; border: none; padding: 15px 20px; transition: all 0.2s; }
+        .list-group-item-action:hover { background-color: #343a40; color: #fff; padding-left: 25px; }
+        .list-group-item-action.active { background-color: #0d6efd; color: #fff; border-left: 4px solid #fff; }
+        .list-group-item i { margin-right: 10px; }
+        
+        #page-content-wrapper { width: 100%; margin-left: 250px; transition: margin .25s ease-out; }
+        .navbar-top { background-color: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); padding: 15px 30px; }
+
+        @media (max-width: 768px) {
+            #sidebar-wrapper { margin-left: -250px; }
+            #page-content-wrapper { margin-left: 0; }
+            #wrapper.toggled #sidebar-wrapper { margin-left: 0; }
+        }
+
+        #overlay { display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 990; }
+        #wrapper.toggled #overlay { display: block; }
+
+        /* --- CARD RELATORIO --- */
+        .card-relatorio {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background-color: white;
+            padding: 30px;
+            max-width: 800px;
+            margin: 0 auto; /* Centraliza */
+        }
+        
+        .texto-instrucao {
+            color: #6c757d;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+    </style>
 </head>
 
 <body>
-
-    <div class="container">
-        <h2>Relatório de Utilização</h2>
+    <div class="d-flex" id="wrapper">
         
-        <p class="texto-instrucao">
-            Selecione os filtros abaixo para gerar o PDF.
-        </p>
+        <div id="sidebar-wrapper">
+            <img src="img/sys_lab_logo_white.svg" alt="SysLab Logo" class="sidebar-heading img-fluid p-3">
+            <div class="list-group list-group-flush mt-3">
+                <a href="adm-portal.html" class="list-group-item list-group-item-action">
+                    <i class="bi bi-house-door"></i> Início
+                </a>
+                <a href="adm-gerenciar-usuario.html" class="list-group-item list-group-item-action">
+                    <i class="bi bi-people"></i> Gerenciar Usuários
+                </a>
+                <a href="adm-lista-reservas.html" class="list-group-item list-group-item-action">
+                    <i class="bi bi-calendar-check"></i> Gerenciar Reservas
+                </a>
+                <a href="adm-gerenciar-sala.html" class="list-group-item list-group-item-action">
+                    <i class="bi bi-pc-display"></i> Gerenciar Salas
+                </a>
+                <a href="adm-relatorio.html" class="list-group-item list-group-item-action active">
+                    <i class="bi bi-file-earmark-pdf"></i> Relatórios
+                </a>
+                <a href="index.html" class="list-group-item list-group-item-action text-danger mt-5" onclick="logout()">
+                    <i class="bi bi-box-arrow-left"></i> Sair
+                </a>
+            </div>
+        </div>
 
-        <div class="bloco-sala">
+        <div id="page-content-wrapper">
             
-            <label>Data Início:</label>
-            <input type="date" id="dataInicio">
+            <nav class="navbar navbar-expand-lg navbar-top">
+                <div class="container-fluid">
+                    <button class="btn btn-outline-dark d-md-none" id="menu-toggle"><i class="bi bi-list"></i></button>
+                    <div class="ms-auto d-flex align-items-center">
+                        <div class="me-3 text-end d-none d-md-block">
+                            <span class="d-block fw-bold text-dark" id="user-name-display">Admin</span>
+                            <small class="text-muted" id="user-type-display">Administrador</small>
+                        </div>
+                        <img src="" id="user-avatar" class="rounded-circle" width="40" height="40" alt="Avatar">
+                    </div>
+                </div>
+            </nav>
 
-            <label>Data Fim:</label>
-            <input type="date" id="dataFim">
+            <div class="container-fluid px-4 mt-4 pb-5">
+                <h2 class="mb-4 text-dark border-bottom pb-2">Relatórios de Reservas</h2>
 
-            <label>Sala Específica (Opcional):</label>
-            <select id="selectSala">
-                <option value="0">Todas as Salas</option>
-            </select>
+                <div class="card-relatorio">
+                    <h4 class="mb-3 text-primary"><i class="bi bi-file-earmark-text"></i> Gerar Relatório PDF</h4>
+                    <p class="texto-instrucao">Selecione os filtros abaixo para personalizar o relatório de utilização das salas.</p>
 
-            <label>Nome do Usuário (Opcional):</label>
-            <input type="text" id="nomeUsuario" placeholder="Digite parte do nome...">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="dataInicio" class="form-label fw-bold">Data Início</label>
+                            <input type="date" id="dataInicio" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="dataFim" class="form-label fw-bold">Data Fim</label>
+                            <input type="date" id="dataFim" class="form-control">
+                        </div>
 
-            <hr>
+                        <div class="col-md-12">
+                            <label for="selectSala" class="form-label fw-bold">Sala Específica (Opcional)</label>
+                            <select id="selectSala" class="form-select">
+                                <option value="0">Todas as Salas</option>
+                                <option value="0" disabled>Carregando salas...</option>
+                            </select>
+                        </div>
 
-            <button onclick="gerarRelatorio()" class="btn-pdf">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                    <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-                Baixar Relatório PDF
-            </button>
-            
-            <button onclick="window.location.href='index.html'" class="btn-voltar">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-                Voltar
-            </button>
+                        <div class="col-md-12">
+                            <label for="nomeUsuario" class="form-label fw-bold">Nome do Usuário (Opcional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" id="nomeUsuario" class="form-control" placeholder="Digite parte do nome do professor...">
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-4 d-flex justify-content-between">
+                            <button onclick="window.location.href='portal_funcionario.html'" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-arrow-left"></i> Voltar
+                            </button>
+                            
+                            <button onclick="gerarRelatorio()" class="btn btn-danger px-4">
+                                <i class="bi bi-file-earmark-pdf-fill"></i> Baixar Relatório PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
+    
+    <div id="overlay" onclick="fecharMenu()"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        // Ao carregar a página, busca as salas no banco para preencher o Select
-        window.onload = async function() {
+        // --- 1. AUTENTICAÇÃO E UI ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            const usuarioId = localStorage.getItem('usuario_id');
+            const usuarioTipo = localStorage.getItem('usuario_tipo');
+            const usuarioNome = localStorage.getItem('usuario_nome');
+
+            if (!usuarioId || usuarioTipo !== 'ADMIN') {
+                alert("Acesso restrito.");
+                window.location.href = 'index.html';
+                return;
+            }
+
+            document.getElementById('user-name-display').innerText = usuarioNome;
+            document.getElementById('user-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(usuarioNome)}&background=0D6EFD&color=fff`;
+
+            // Carrega as salas para o filtro
+            carregarSalasNoFiltro();
+        });
+
+        // --- 2. CARREGAR SALAS ---
+        async function carregarSalasNoFiltro() {
             try {
                 const res = await fetch('/api/sala/findAll');
                 const json = await res.json();
                 
                 if(json.sucesso) {
                     const select = document.getElementById('selectSala');
+                    // Limpa (mantendo a opção "Todas")
+                    select.innerHTML = '<option value="0">Todas as Salas</option>';
                     
                     json.data.forEach(sala => {
                         const opt = document.createElement('option');
@@ -72,21 +186,19 @@
                         opt.innerText = sala.nome;
                         select.appendChild(opt);
                     });
-                } else {
-                    console.error("Erro ao buscar salas: " + json.erro);
                 }
             } catch (error) {
-                console.error("Erro na requisição de salas", error);
+                console.error("Erro ao buscar salas", error);
             }
-        };
+        }
 
+        // --- 3. AÇÃO DE GERAR PDF ---
         function gerarRelatorio() {
             const dataInicio = document.getElementById("dataInicio").value;
             const dataFim = document.getElementById("dataFim").value;
             const idSala = document.getElementById("selectSala").value;
             const nomeUsuario = document.getElementById("nomeUsuario").value;
 
-            // Monta os parâmetros para enviar ao backend
             const params = new URLSearchParams({
                 dataInicio,
                 dataFim,
@@ -94,11 +206,25 @@
                 nomeUsuario
             });
 
-            // Chama a rota que gera o PDF
+            // Abre em nova aba
             const url = `/api/relatorio/gerar?${params.toString()}`;
-
-            // Abre o PDF numa nova aba
             window.open(url, '_blank');
+        }
+
+        // --- 4. MENU MOBILE ---
+        const wrapper = document.getElementById("wrapper");
+        document.getElementById("menu-toggle").onclick = (e) => {
+            e.stopPropagation();
+            wrapper.classList.toggle("toggled");
+            document.getElementById("overlay").style.display = wrapper.classList.contains("toggled") ? "block" : "none";
+        };
+        function fecharMenu() {
+            wrapper.classList.remove("toggled");
+            document.getElementById("overlay").style.display = "none";
+        }
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
         }
     </script>
 </body>

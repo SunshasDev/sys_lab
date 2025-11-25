@@ -2,213 +2,90 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gerenciar Usuários</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início - SysLab</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
     <style>
-        body {
-            background-color: #f3f4f6;
-            overflow-x: hidden;
-        }
+        body { background-color: #f3f4f6; overflow-x: hidden; }
 
-        /* Sidebar e Layout */
-        #wrapper {
-            display: flex;
-            width: 100%;
-            min-height: 100vh;
-        }
-
-        #sidebar-wrapper {
-            min-height: 100vh;
-            width: 250px;
-            margin-left: 0;
-            background-color: #212529;
-            color: #fff;
-            transition: margin .25s ease-out;
-            position: fixed;
-            z-index: 1000;
-        }
-
-        #sidebar-wrapper .sidebar-heading {
-            padding: 1.5rem 1.25rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-            background-color: #1a1e21;
-            text-align: center;
-            border-bottom: 1px solid #444;
-        }
-
-        .list-group-item-action {
-            background-color: transparent;
-            color: #b3b3b3;
-            border: none;
-            padding: 15px 20px;
-            transition: all 0.2s;
-        }
-
-        .list-group-item-action:hover {
-            background-color: #343a40;
-            color: #fff;
-            padding-left: 25px;
-        }
-
-        .list-group-item-action.active {
-            background-color: #0d6efd;
-            color: #fff;
-            border-left: 4px solid #fff;
-        }
-
-        .list-group-item i {
-            margin-right: 10px;
-        }
-
-        #page-content-wrapper {
-            width: 100%;
-            margin-left: 250px;
-            transition: margin .25s ease-out;
-        }
-
-        .navbar-top {
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-            padding: 15px 30px;
-        }
-
-        /* Cards */
-        .card-dashboard {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
-        }
+        /* --- LAYOUT --- */
+        #wrapper { display: flex; width: 100%; min-height: 100vh; }
+        #sidebar-wrapper { min-height: 100vh; width: 250px; margin-left: 0; background-color: #212529; color: #fff; transition: margin .25s ease-out; position: fixed; z-index: 1000; }
+        #sidebar-wrapper .sidebar-heading { padding: 1rem 0; background-color: #1a1e21; text-align: center; border-bottom: 1px solid #444; display: flex; justify-content: center; }
+        .logo-sidebar { max-width: 80%; height: auto; object-fit: contain; }
+        
+        .list-group-item-action { background-color: transparent; color: #b3b3b3; border: none; padding: 15px 20px; transition: all 0.2s; }
+        .list-group-item-action:hover { background-color: #343a40; color: #fff; padding-left: 25px; }
+        .list-group-item-action.active { background-color: #0d6efd; color: #fff; border-left: 4px solid #fff; }
+        .list-group-item i { margin-right: 10px; }
+        
+        #page-content-wrapper { width: 100%; margin-left: 250px; transition: margin .25s ease-out; }
+        .navbar-top { background-color: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); padding: 15px 30px; }
 
         @media (max-width: 768px) {
-            #sidebar-wrapper {
-                margin-left: -250px;
-            }
-
-            #page-content-wrapper {
-                margin-left: 0;
-            }
-
-            #wrapper.toggled #sidebar-wrapper {
-                margin-left: 0;
-            }
+            #sidebar-wrapper { margin-left: -250px; }
+            #page-content-wrapper { margin-left: 0; }
+            #wrapper.toggled #sidebar-wrapper { margin-left: 0; }
         }
 
-        /* Overlay para Mobile */
-        #overlay {
-            display: none;
-            position: fixed;
-            width: 100%;
+        #overlay { display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 990; }
+        #wrapper.toggled #overlay { display: block; }
+
+        /* --- ESTILOS DASHBOARD --- */
+        .card-kpi {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
             height: 100%;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 990;
-            cursor: pointer;
         }
-
-        #wrapper.toggled #overlay {
-            display: block;
+        .card-kpi:hover { transform: translateY(-3px); }
+        
+        .icon-box {
+            width: 50px; height: 50px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            color: white;
         }
+        
+        .bg-gradient-primary { background: linear-gradient(45deg, #4e73df, #224abe); }
+        .bg-gradient-success { background: linear-gradient(45deg, #1cc88a, #13855c); }
+        .bg-gradient-warning { background: linear-gradient(45deg, #f6c23e, #dda20a); }
+        .bg-gradient-danger  { background: linear-gradient(45deg, #e74a3b, #be2617); }
 
-        #sidebar-wrapper {
-            z-index: 1000;
-        }
-
-        /* Estilos específicos para usuários - LAYOUT ORIGINAL */
-        .user-card {
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            padding: 20px;
-            background-color: white;
-        }
-
-        .user-view div {
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .user-view strong {
-            display: inline-block;
-            width: 80px;
-            color: #6c757d;
-        }
-
-        .user-actions {
-            margin-top: 15px;
-            text-align: right;
-        }
-
-        .edit-form input,
-        .edit-form select {
+        .chart-container {
+            position: relative;
+            height: 300px;
             width: 100%;
-            padding: 6px 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .edit-form .form-group {
-            margin-bottom: 12px;
-        }
-
-        .edit-form label {
-            font-weight: bold;
-            margin-bottom: 4px;
-            display: block;
-            color: #6c757d;
-            font-size: 13px;
-        }
-
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .status-active {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-inactive {
-            background-color: #fee2e2;
-            color: #991b1b;
-        }
-
-        .type-badge {
-            background-color: #e0f2fe;
-            color: #075985;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
         }
     </style>
 </head>
 
 <body>
     <div class="d-flex" id="wrapper">
+        
         <div id="sidebar-wrapper">
             <img src="img/sys_lab_logo_white.svg" alt="SysLab Logo" class="sidebar-heading img-fluid p-3">
             <div class="list-group list-group-flush mt-3">
-                <a href="#" class="list-group-item list-group-item-action">
-                    <i class="bi bi-speedometer2"></i> Dashboard
+                <a href="#" class="list-group-item list-group-item-action active">
+                    <i class="bi bi-house-door"></i> Início
                 </a>
-                <!-- CORREÇÃO: Remover o href para evitar recarregar a página atual -->
-                <a href="adm-portal.html" class="list-group-item list-group-item-action active" onclick="return false;">
+                <a href="adm-gerenciar-usuario.html" class="list-group-item list-group-item-action">
                     <i class="bi bi-people"></i> Gerenciar Usuários
                 </a>
                 <a href="adm-lista-reservas.html" class="list-group-item list-group-item-action">
                     <i class="bi bi-calendar-check"></i> Gerenciar Reservas
+                </a>
+                <a href="adm-gerenciar-sala.html" class="list-group-item list-group-item-action">
+                    <i class="bi bi-pc-display"></i> Gerenciar Salas
+                </a>
+                <a href="adm-relatorio.html" class="list-group-item list-group-item-action">
+                    <i class="bi bi-file-earmark-pdf"></i> Relatórios
                 </a>
                 <a href="index.html" class="list-group-item list-group-item-action text-danger mt-5" onclick="logout()">
                     <i class="bi bi-box-arrow-left"></i> Sair
@@ -217,92 +94,304 @@
         </div>
 
         <div id="page-content-wrapper">
+            
             <nav class="navbar navbar-expand-lg navbar-top">
                 <div class="container-fluid">
-                    <button class="btn btn-outline-dark d-md-none" id="menu-toggle">
-                        <i class="bi bi-list"></i>
-                    </button>
+                    <button class="btn btn-outline-dark d-md-none" id="menu-toggle"><i class="bi bi-list"></i></button>
                     <div class="ms-auto d-flex align-items-center">
                         <div class="me-3 text-end d-none d-md-block">
-                            <span class="d-block fw-bold text-dark" id="user-name-display">...</span>
-                            <small class="text-muted" id="user-type-display">...</small>
+                            <span class="d-block fw-bold text-dark" id="user-name-display">Admin</span>
+                            <small class="text-muted" id="user-type-display">Administrador</small>
                         </div>
                         <img src="" id="user-avatar" class="rounded-circle" width="40" height="40" alt="Avatar">
                     </div>
                 </div>
             </nav>
 
-            <div class="container-fluid px-4 mt-4">
+            <div class="container-fluid px-4 mt-4 pb-5">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="mb-0 text-dark" id="page-title">Gerenciar Usuários</h2>
-                    <a href="adm-cadastro-usuario.html" class="btn btn-primary">
-                        <i class="bi bi-person-plus"></i> Cadastrar Usuário
-                    </a>
+                    <h2 class="text-dark mb-0">Visão Geral</h2>
+                    <span class="text-muted small" id="data-hoje">Data de hoje...</span>
                 </div>
 
-                <!-- Filtros e Pesquisa -->
-                <div class="card card-dashboard mb-4">
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Filtrar por Status:</label>
-                                <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-outline-primary btn-sm"
-                                        onclick="carregarTodosUsuarios()">Todos</button>
-                                    <button type="button" class="btn btn-outline-success btn-sm"
-                                        onclick="carregarUsuariosAtivos()">Ativos</button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm"
-                                        onclick="carregarUsuariosInativos()">Inativos</button>
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="card card-kpi p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted small text-uppercase mb-1 fw-bold">Reservas Hoje</p>
+                                    <h3 class="mb-0 fw-bold text-dark" id="kpi-hoje">-</h3>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="search-email" class="form-label fw-bold">Pesquisar por Email:</label>
-                                <div class="input-group input-group-sm">
-                                    <input type="email" id="search-email" class="form-control"
-                                        placeholder="Digite o email...">
-                                    <button class="btn btn-primary" type="button" onclick="pesquisarPorEmail()">
-                                        <i class="bi bi-search"></i> Pesquisar
-                                    </button>
-                                    <button class="btn btn-outline-secondary" type="button" onclick="limparPesquisa()">
-                                        <i class="bi bi-x-circle"></i> Limpar
-                                    </button>
+                                <div class="icon-box bg-gradient-primary">
+                                    <i class="bi bi-calendar-day"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Mensagens -->
-                <div id="message" class="alert alert-dismissible fade show" style="display: none;" role="alert">
-                    <span id="message-text"></span>
-                    <button type="button" class="btn-close" onclick="fecharMensagem()"></button>
-                </div>
-
-                <!-- Lista de Usuários -->
-                <div class="card card-dashboard">
-                    <div class="card-header bg-white py-3">
-                        <h6 class="m-0 fw-bold text-primary">
-                            <i class="bi bi-people"></i> <span id="list-title">Lista de Usuários</span>
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <div id="loading-users" class="text-center py-4">
-                            <div class="spinner-border text-primary" role="status"></div>
-                            <p class="mt-2">Carregando usuários...</p>
-                        </div>
-
-                        <div id="users-container" style="display: none;">
-                            <!-- Os cards dos usuários serão inseridos aqui -->
+                    <div class="col-md-3">
+                        <div class="card card-kpi p-3 border-start border-4 border-warning">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted small text-uppercase mb-1 fw-bold">Pendentes</p>
+                                    <h3 class="mb-0 fw-bold text-warning" id="kpi-pendentes">-</h3>
+                                </div>
+                                <div class="icon-box bg-gradient-warning">
+                                    <i class="bi bi-hourglass-split"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="col-md-3">
+                        <div class="card card-kpi p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted small text-uppercase mb-1 fw-bold">Salas Ativas</p>
+                                    <h3 class="mb-0 fw-bold text-success" id="kpi-salas-ativas">-</h3>
+                                </div>
+                                <div class="icon-box bg-gradient-success">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card card-kpi p-3 border-start border-4 border-danger">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted small text-uppercase mb-1 fw-bold">Em Manutenção</p>
+                                    <h3 class="mb-0 fw-bold text-danger" id="kpi-manutencao">-</h3>
+                                </div>
+                                <div class="icon-box bg-gradient-danger">
+                                    <i class="bi bi-tools"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card card-kpi shadow-sm">
+                            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 fw-bold text-primary">Agenda do Dia (Hoje)</h6>
+                                <a href="sala-reservas-admin.html" class="btn btn-sm btn-outline-primary">Ver Todas</a>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="ps-4">Sala</th>
+                                                <th>Horário</th>
+                                                <th>Professor</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabela-hoje">
+                                            <tr><td colspan="4" class="text-center py-4"><div class="spinner-border text-primary"></div></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card card-kpi shadow-sm">
+                            <div class="card-header bg-white py-3">
+                                <h6 class="m-0 fw-bold text-dark">Volume Semanal</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="graficoSemanal"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
+    
     <div id="overlay" onclick="fecharMenu()"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="./js/portal_admin.js"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        
+        // Mapas globais
+        let mapaSalas = {};
+        let mapaUsuarios = {};
+        let mapaTurnos = {};
 
+        // 1. Inicialização
+        document.addEventListener('DOMContentLoaded', async () => {
+            const usuarioId = localStorage.getItem('usuario_id');
+            const usuarioTipo = localStorage.getItem('usuario_tipo');
+            const usuarioNome = localStorage.getItem('usuario_nome');
+
+            if (!usuarioId || usuarioTipo !== 'ADMIN') {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Header
+            document.getElementById('user-name-display').innerText = usuarioNome;
+            document.getElementById('user-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(usuarioNome)}&background=0D6EFD&color=fff`;
+            
+            // Data de hoje no topo
+            const hoje = new Date();
+            document.getElementById('data-hoje').innerText = hoje.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+            await carregarDadosDashboard();
+        });
+
+        // 2. Carregamento Geral
+        async function carregarDadosDashboard() {
+            try {
+                // Busca tudo em paralelo
+                const [resSalas, resReservas, resUsuarios, resHorarios] = await Promise.all([
+                    fetch(`${API_BASE}/sala/findAll`),
+                    fetch(`${API_BASE}/reserva/findAll`),
+                    fetch(`${API_BASE}/usuario/findAll`),
+                    fetch(`${API_BASE}/horario/findAll`)
+                ]);
+
+                const jsonSalas = await resSalas.json();
+                const jsonReservas = await resReservas.json();
+                const jsonUsuarios = await resUsuarios.json();
+                const jsonHorarios = await resHorarios.json();
+
+                // Preenche mapas
+                if(jsonSalas.sucesso) jsonSalas.data.forEach(s => mapaSalas[s.id_sala] = s);
+                if(jsonUsuarios.sucesso) jsonUsuarios.data.forEach(u => mapaUsuarios[u.id_usuario] = u.nome);
+                if(jsonHorarios.sucesso) jsonHorarios.data.forEach(h => mapaTurnos[h.id_horario] = h.turno);
+
+                // Preenche KPIs de Salas
+                const salas = jsonSalas.data || [];
+                const manutencao = salas.filter(s => s.status === 'MANUTENCAO').length;
+                const ativas = salas.filter(s => s.status === 'DISPONIVEL' || s.status === 'OCUPADA').length;
+                
+                document.getElementById('kpi-manutencao').innerText = manutencao;
+                document.getElementById('kpi-salas-ativas').innerText = ativas;
+
+                // Preenche Dados de Reservas
+                processarReservas(jsonReservas.data || []);
+
+            } catch (error) {
+                console.error("Erro ao carregar dashboard", error);
+            }
+        }
+
+        function processarReservas(reservas) {
+            const hojeStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            
+            // KPIs
+            const reservasHoje = reservas.filter(r => r.data_reserva.startsWith(hojeStr) && r.status !== 'CANCELADA');
+            const pendentes = reservas.filter(r => r.status === 'PENDENTE');
+
+            document.getElementById('kpi-hoje').innerText = reservasHoje.length;
+            document.getElementById('kpi-pendentes').innerText = pendentes.length;
+
+            // Tabela Hoje
+            renderizarTabelaHoje(reservasHoje);
+
+            // Gráfico (Últimos 7 dias ou Próximos 7 dias - vamos fazer Volume Semanal Geral)
+            renderizarGrafico(reservas);
+        }
+
+        function renderizarTabelaHoje(reservasHoje) {
+            const tbody = document.getElementById('tabela-hoje');
+            tbody.innerHTML = '';
+
+            if (reservasHoje.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">Nenhuma reserva agendada para hoje.</td></tr>`;
+                return;
+            }
+
+            // Ordenar por horário
+            reservasHoje.sort((a, b) => a.fk_horario - b.fk_horario);
+
+            reservasHoje.forEach(r => {
+                const nomeSala = mapaSalas[r.fk_sala] ? mapaSalas[r.fk_sala].nome : `ID ${r.fk_sala}`;
+                const nomeProf = mapaUsuarios[r.fk_usuario] || 'Desconhecido';
+                const turno = mapaTurnos[r.fk_horario] || 'Turno';
+                
+                let badge = `<span class="badge bg-success">Confirmada</span>`;
+                if(r.status === 'PENDENTE') badge = `<span class="badge bg-warning text-dark">Pendente</span>`;
+
+                const tr = `
+                    <tr>
+                        <td class="ps-4 fw-bold">${nomeSala}</td>
+                        <td>${turno}</td>
+                        <td>${nomeProf}</td>
+                        <td>${badge}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += tr;
+            });
+        }
+
+        function renderizarGrafico(todasReservas) {
+            // Agrupar reservas por dia da semana (apenas confirmadas)
+            const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            const contagem = [0, 0, 0, 0, 0, 0, 0];
+
+            todasReservas.forEach(r => {
+                if(r.status === 'CONFIRMADA') {
+                    const data = new Date(r.data_reserva);
+                    const diaIndex = data.getDay(); // 0 a 6
+                    contagem[diaIndex]++;
+                }
+            });
+
+            const ctx = document.getElementById('graficoSemanal').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: diasSemana,
+                    datasets: [{
+                        label: 'Reservas Totais',
+                        data: contagem,
+                        backgroundColor: '#4e73df',
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Mobile Menu
+        const wrapper = document.getElementById("wrapper");
+        document.getElementById("menu-toggle").onclick = (e) => {
+            e.stopPropagation();
+            wrapper.classList.toggle("toggled");
+            document.getElementById("overlay").style.display = wrapper.classList.contains("toggled") ? "block" : "none";
+        };
+        function fecharMenu() {
+            wrapper.classList.remove("toggled");
+            document.getElementById("overlay").style.display = "none";
+        }
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
 </html>
