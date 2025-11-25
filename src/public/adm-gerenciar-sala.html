@@ -80,6 +80,16 @@
             margin-left: 5px;
         }
         .btn-remove-recurso:hover { color: #a71d2a; }
+
+        /* --- NOVO: Estilo para os checkboxes dentro do modal --- */
+        .checkbox-group {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
     </style>
 </head>
 
@@ -131,6 +141,15 @@
                 <div class="row">
                     <div class="col-lg-4">
                         
+                        <div class="card card-gerencia border-primary border-2">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-primary fw-bold">Nova Sala</h5>
+                                <p class="card-text small text-muted">Cadastre um novo laboratório no sistema.</p>
+                                <button class="btn btn-primary w-100" onclick="abrirModalSala()">
+                                    <i class="bi bi-plus-lg"></i> Cadastrar Sala
+                                </button>
+                            </div>
+                        </div>
                         <div class="card card-gerencia">
                             <div class="card-header-custom"><i class="bi bi-plus-circle"></i> Novo Recurso</div>
                             <div class="card-body">
@@ -192,6 +211,43 @@
         </div>
     </div>
     
+    <div class="modal fade" id="modalCadastroSala" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Cadastrar Nova Sala</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="msgModalSala"></div>
+                    
+                    <form id="formSala">
+                        <div class="mb-3">
+                            <label for="nomeNovaSala" class="form-label fw-bold">Nome da Sala</label>
+                            <input type="text" class="form-control" id="nomeNovaSala" name="nome" placeholder="Ex: Laboratório 01" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="capacidadeNovaSala" class="form-label fw-bold">Capacidade</label>
+                            <input type="number" class="form-control" id="capacidadeNovaSala" name="capacidade" min="1" value="30" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Recursos da Sala</label>
+                            <p class="text-muted small mb-2">Marque os recursos que esta sala possui:</p>
+                            <div id="checkbox_recursos" class="checkbox-group">
+                                <div class="text-center text-muted small">Carregando recursos...</div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Confirmar Cadastro</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="overlay" onclick="fecharMenu()"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -240,7 +296,99 @@
             setTimeout(() => { element.innerHTML = ''; }, 4000);
         }
 
-        // --- 3. CARREGAMENTO DE DADOS ---
+        // --- 3. LÓGICA DO MODAL DE CADASTRO (NOVO) ---
+        
+        // Abrir Modal e Carregar Checkboxes
+        async function abrirModalSala() {
+            const modal = new bootstrap.Modal(document.getElementById('modalCadastroSala'));
+            const container = document.getElementById('checkbox_recursos');
+            
+            // Limpa e mostra loading
+            container.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm text-primary"></div></div>';
+            document.getElementById('msgModalSala').innerHTML = ''; // Limpa erros anteriores
+            
+            try {
+                const response = await fetch(`${API_BASE}/recurso/findAll`);
+                const result = await response.json();
+                
+                container.innerHTML = ''; // Limpa loading
+                
+                if (result.sucesso && result.data) {
+                    if(result.data.length === 0) {
+                        container.innerHTML = '<small class="text-muted">Nenhum recurso cadastrado no sistema.</small>';
+                    } else {
+                        result.data.forEach(recurso => {
+                            const div = document.createElement('div');
+                            div.className = 'form-check';
+                            div.innerHTML = `
+                                <input class="form-check-input" type="checkbox" id="modal_rec_${recurso.id_recurso}" value="${recurso.id_recurso}">
+                                <label class="form-check-label" for="modal_rec_${recurso.id_recurso}">
+                                    ${recurso.nome}
+                                </label>
+                            `;
+                            container.appendChild(div);
+                        });
+                    }
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="text-danger small">Erro ao carregar recursos.</div>';
+            }
+
+            modal.show();
+        }
+
+        // Salvar Nova Sala
+        document.getElementById('formSala').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const nome = document.getElementById('nomeNovaSala').value;
+            const capacidade = parseInt(document.getElementById('capacidadeNovaSala').value);
+            const msgModal = document.getElementById('msgModalSala');
+            
+            // Coleta recursos marcados no checkbox
+            const recursosSelecionados = [];
+            document.querySelectorAll('#checkbox_recursos input[type="checkbox"]:checked').forEach(cb => {
+                recursosSelecionados.push(parseInt(cb.value));
+            });
+
+            const salaData = {
+                nome: nome,
+                capacidade: capacidade,
+                status: 'DISPONIVEL',
+                recursos: recursosSelecionados // Back-end deve tratar esse array
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/sala/save`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(salaData)
+                });
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    alert('Sala cadastrada com sucesso!');
+                    
+                    // Fecha modal e limpa form
+                    const modalEl = document.getElementById('modalCadastroSala');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    modal.hide();
+                    document.getElementById('formSala').reset();
+                    
+                    // Atualiza a lista de salas
+                    await carregarTodasSalas();
+                    await carregarSalasEDropdown();
+                } else {
+                    msgModal.innerHTML = `<div class="alert alert-danger py-2">${result.erro}</div>`;
+                }
+            } catch (error) {
+                console.error(error);
+                msgModal.innerHTML = `<div class="alert alert-danger py-2">Erro de conexão.</div>`;
+            }
+        });
+
+
+        // --- 4. CARREGAMENTO DE DADOS GERAIS ---
         async function carregarSalasEDropdown() {
             try {
                 const resp = await fetch(`${API_BASE}/sala/findAll`);
@@ -273,7 +421,7 @@
             } catch (e) { console.error(e); }
         }
 
-        // --- 4. AÇÕES DE FORMULÁRIO (ADICIONAR RECURSO / VINCULAR) ---
+        // --- 5. AÇÕES DE FORMULÁRIO (ADICIONAR RECURSO / VINCULAR) ---
         formRecurso.addEventListener('submit', async (e) => {
             e.preventDefault();
             const nome = document.getElementById('nomeRecurso').value.trim();
@@ -312,14 +460,13 @@
                 if (!resp.ok || !json.sucesso) throw new Error(json.erro || 'Erro ao vincular');
 
                 showMessage(msgVinculo, 'Vínculo criado com sucesso!', 'success');
-                // Recarrega a lista para mostrar o novo recurso na sala
                 carregarTodasSalas(); 
             } catch (e) {
                 showMessage(msgVinculo, e.message, 'danger');
             }
         });
 
-        // --- 5. LISTAGEM E GERENCIAMENTO DE SALAS ---
+        // --- 6. LISTAGEM E GERENCIAMENTO DE SALAS ---
         async function carregarTodasSalas() {
             listaDiv.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>';
             try {
@@ -346,7 +493,6 @@
             exibirSalasParaGerenciamento(filtradas);
         }
 
-        // RENDERIZAÇÃO DA LISTA
         async function exibirSalasParaGerenciamento(salas) {
             if (salas.length === 0) {
                 listaDiv.innerHTML = '<p class="text-center text-muted py-4">Nenhuma sala encontrada.</p>';
@@ -355,14 +501,11 @@
 
             listaDiv.innerHTML = '';
 
-            // Precisamos buscar os recursos de cada sala para exibir junto
-            // Para performance, vamos renderizar a sala e depois buscar os recursos assincronamente
             for (const sala of salas) {
                 const salaDiv = document.createElement('div');
                 salaDiv.id = `sala-${sala.id_sala}`;
                 salaDiv.className = 'sala-item';
 
-                // Badge de Status
                 let badgeClass = 'bg-success';
                 if(sala.status === 'MANUTENCAO') badgeClass = 'bg-warning text-dark';
                 if(sala.status === 'DESATIVADA') badgeClass = 'bg-danger';
@@ -395,8 +538,6 @@
                 `;
 
                 listaDiv.appendChild(salaDiv);
-                
-                // Busca recursos desta sala
                 carregarRecursosDaSala(sala.id_sala);
             }
         }
@@ -425,14 +566,12 @@
             }
         }
 
-        // --- 6. AÇÕES INDIVIDUAIS (EDITAR, STATUS, REMOVER RECURSO) ---
-        
+        // --- 7. FUNÇÕES DE EDIÇÃO E EXCLUSÃO ---
         function iniciarEdicaoSala(salaId) {
             const salaDiv = document.getElementById(`sala-${salaId}`);
             const nomeAtual = document.getElementById(`sala-nome-${salaId}`).childNodes[0].textContent.trim();
             const capacidadeAtual = document.getElementById(`sala-capacidade-${salaId}`).textContent;
             
-            // Pega o status "cru" da sala original para popular o select
             const salaObj = todasSalas.find(s => s.id_sala === salaId);
             const statusAtual = salaObj ? salaObj.status : 'DISPONIVEL';
 
@@ -485,7 +624,7 @@
                 const json = await resp.json();
                 if (!resp.ok || !json.sucesso) throw new Error(json.erro);
 
-                carregarTodasSalas(); // Recarrega visual
+                carregarTodasSalas();
             } catch (error) {
                 alert("Erro ao atualizar: " + error.message);
             }
@@ -525,12 +664,11 @@
                 const json = await resp.json();
                 if (!json.sucesso) throw new Error(json.erro);
                 
-                // Recarrega só os recursos desta sala
                 carregarRecursosDaSala(salaId);
             } catch(e) { alert("Erro ao remover: " + e.message); }
         }
 
-        // --- 7. MENU MOBILE ---
+        // --- 8. MENU MOBILE ---
         const wrapper = document.getElementById("wrapper");
         document.getElementById("menu-toggle").onclick = (e) => {
             e.stopPropagation();
