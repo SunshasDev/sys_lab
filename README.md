@@ -21,18 +21,6 @@ Agradecimentos a todos que contribuíram para o projeto!
 <table>
   <tbody>
     <tr>
-      <!-- Isaque -->
-      <td align="center" width="20%">
-        <a href="https://github.com/isaqxd">
-          <img src="https://avatars.githubusercontent.com/u/156721412?v=4?s=100" width="100px" alt="Isaque Costa"/>
-          <br />
-          <sub><b>Isaque Costa</b></sub>
-        </a>
-        <br />
-        <a href="https://www.linkedin.com/in/isaqxd">
-          <img src="https://img.shields.io/badge/-LinkedIn-blue?style=flat-square&logo=linkedin&logoColor=white" />
-        </a>
-      </td>
       <!-- Luis Eduardo -->
       <td align="center" width="20%">
         <a href="https://github.com/sunshasdev">
@@ -42,6 +30,18 @@ Agradecimentos a todos que contribuíram para o projeto!
         </a>
         <br />
         <a href="https://www.linkedin.com/in/luis-eduardo-oliveira-maia-464389324/">
+          <img src="https://img.shields.io/badge/-LinkedIn-blue?style=flat-square&logo=linkedin&logoColor=white" />
+        </a>
+      </td>
+      <!-- Isaque -->
+      <td align="center" width="20%">
+        <a href="https://github.com/isaqxd">
+          <img src="https://avatars.githubusercontent.com/u/156721412?v=4?s=100" width="100px" alt="Isaque Costa"/>
+          <br />
+          <sub><b>Isaque Costa</b></sub>
+        </a>
+        <br />
+        <a href="https://www.linkedin.com/in/isaqxd">
           <img src="https://img.shields.io/badge/-LinkedIn-blue?style=flat-square&logo=linkedin&logoColor=white" />
         </a>
       </td>
